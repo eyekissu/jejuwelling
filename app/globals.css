@@ -1,0 +1,196 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+.tank {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0e4a6e 0%, #0a3556 45%, #062033 100%);
+}
+
+/* moving light rays from the surface */
+.rays {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    105deg,
+    rgba(255, 255, 255, 0.06) 0px,
+    rgba(255, 255, 255, 0.06) 40px,
+    transparent 40px,
+    transparent 120px
+  );
+  animation: rays-drift 14s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes rays-drift {
+  from {
+    transform: translateX(-40px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateX(40px);
+    opacity: 1;
+  }
+}
+
+/* each fish travels across the tank, right to left, then loops */
+.swimmer {
+  position: absolute;
+  left: 100%;
+  transform: translateX(0);
+  animation-name: swim-across;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes swim-across {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* travel full viewport width plus the fish's own width */
+    transform: translateX(calc(-100vw - 100%));
+  }
+}
+
+/* gentle vertical bobbing, layered on top of the horizontal travel */
+.bob {
+  animation-name: bob;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes bob {
+  from {
+    transform: translateY(-8px) rotate(-1.5deg);
+  }
+  to {
+    transform: translateY(8px) rotate(1.5deg);
+  }
+}
+
+/* ---- the natural swimming motion ---- */
+
+/* tail sweeps back and forth around its base */
+.fish-tail {
+  animation-name: tail-swish;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes tail-swish {
+  from {
+    transform: rotate(-14deg);
+  }
+  to {
+    transform: rotate(14deg);
+  }
+}
+
+/* body undulates subtly, slightly offset from the tail for a lifelike flow */
+.fish-body {
+  transform-origin: 120px 60px;
+  animation-name: body-undulate;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+@keyframes body-undulate {
+  from {
+    transform: rotate(-2deg) scaleY(0.98);
+  }
+  to {
+    transform: rotate(2deg) scaleY(1.02);
+  }
+}
+
+/* fins flutter with the same rhythm */
+.fish-dorsal,
+.fish-pelvic {
+  transform-origin: 130px 50px;
+  animation-name: fin-flutter;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.fish-pelvic {
+  transform-origin: 128px 90px;
+}
+
+@keyframes fin-flutter {
+  from {
+    transform: rotate(-4deg);
+  }
+  to {
+    transform: rotate(4deg);
+  }
+}
+
+/* rising bubbles */
+.bubbles span {
+  position: absolute;
+  bottom: -40px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.15));
+  animation-name: rise;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+  opacity: 0;
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-100vh) translateX(20px);
+    opacity: 0;
+  }
+}
+
+/* seabed */
+.seabed {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 90px;
+  background: radial-gradient(120% 80% at 50% 100%, #0b3350 0%, transparent 70%),
+    linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.35));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swimmer,
+  .bob,
+  .fish-tail,
+  .fish-body,
+  .fish-dorsal,
+  .fish-pelvic,
+  .bubbles span,
+  .rays {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+  }
+}
